@@ -1,1 +1,1 @@
-# Veritas.ai
+# LLMuminate.ai
