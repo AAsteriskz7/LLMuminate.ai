@@ -16,8 +16,7 @@ def get_abstracts_from_keywords(keywords):
         # Loop until we collect 5 papers with abstracts
         while abstracts_collected < abstracts_to_collect:
             # Step 3: Search for papers using the keyword in title and abstract, with pagination
-            #results = Works().search_filter(title_and_abstract=keyword).get(page=page, per_page=10)  # Fetch more papers per request
-            results = Works().search_filter(title_and_abstract=keyword, type="journal-article").get(page=page, per_page=10)  # Fetch more papers per request
+            results = Works().search_filter(title_and_abstract=keyword).get(page=page, per_page=10)  # Fetch more papers per request
             
             # Step 4: Process the results
             for work in results:
@@ -51,7 +50,7 @@ def get_abstracts_from_keywords(keywords):
             print('-' * 80)
 
 # Step 6: Define the list of keywords
-keywords = ['machine learning', 'artificial intelligence', 'computer vision']
+keywords = ['Human banana DNA']
 
 # Step 7: Call the function with your keywords
 get_abstracts_from_keywords(keywords)
