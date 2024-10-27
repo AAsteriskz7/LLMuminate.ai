@@ -38,10 +38,12 @@ const start = () => {
           );
           ++i;
         }
+        showLoadingScreen();
         document.body = await factCheck(convo[convo.length - 1].textContent);
       } else if (
         doc.querySelector("title").textContent.search("Claude") != -1
       ) {
+        showLoadingScreen();
         document.body = await factCheck(
           doc
             .querySelector('div[data-test-render-count="1"]')
@@ -53,6 +55,7 @@ const start = () => {
           .getAttribute("content") == "Gemini"
       ) {
         let responses = doc.querySelectorAll("message-content");
+        showLoadingScreen();
         document.body = await factCheck(
           responses[responses.length - 1].textContent
         );
@@ -72,6 +75,7 @@ const start = () => {
         document.body.removeChild(textInput);
         document.body.removeChild(button);
         document.body.removeChild(title);
+        showLoadingScreen();
         document.body = await factCheck(textInput.value);
       });
       document.body.appendChild(textInput);
@@ -137,25 +141,37 @@ const formatSimilarityScore = (similarityScore) => {
             width : 100%;
         }
         #true {
-            justify-self : left;
-            height : 20px;
-            width : ${similarityScore.similarity_score}%;
-            background-color : green;
-            border-top-left-radius : 10px;
-            border-bottom-left-radius : 10px;
-            text-align : center;
+            justify-self: left;
+            height: 20px;
+            width: ${similarityScore.similarity_score}%;
+            background-color: rgb(103, 204, 123);
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: ${
+              similarityScore.similarity_score == 100 ? 10 : 0
+            }px;
+            border-top-right-radius: ${
+              similarityScore.similarity_score == 100 ? 10 : 0
+            }px;
+            text-align: center;
         }
         #false {
             justify-self : right;
-            height : 20px;
-            width : ${100 - similarityScore.similarity_score}%;
-            background-color : red;
-            border-top-right-radius : 10px;
-            border-bottom-right-radius : 10px;
-            text-align : center;
+            height: 20px;
+            width: ${100 - similarityScore.similarity_score}%;
+            background-color: rgb(246, 112, 112);
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: ${
+              similarityScore.similarity_score == 0 ? 10 : 0
+            }px;
+            border-top-left-radius: ${
+              similarityScore.similarity_score == 0 ? 10 : 0
+            }px;
+            text-align: center;
         }
       </style>
-      <p>${similarityScore.reasoning}</p>`;
+      <p style="color: rgb(128, 140, 250)">${similarityScore.reasoning}</p>`;
   return simcontainer;
 };
 
@@ -164,13 +180,17 @@ const formatFactCheck = (factCheck) => {
         <li>
             <h3 class="llm-claim">\"${factCheck.llm_claim}\"</h3>
             <p class="check">${factCheck.check}</p>
-            <p><a href="${factCheck.backup.link}" target="_blank">Sourc: \"${factCheck.backup.quote}\"</a></p>
+            <p><a href="${factCheck.backup.link}" target="_blank" style="color: rgb(206, 203, 112); text-decoration: none"><u><strong>Source:</strong></u> <i>\"${factCheck.backup.quote}\"</i></a></p>
         </li>
     `;
 };
 
 const formatFactChecks = (factChecks) => {
-  factcontainer = document.createElement("div", (id = "fact-checks"));
+  factcontainer = document.createElement(
+    "div",
+    (id = "fact-checks"),
+    (style = "padding: 20px")
+  );
   factcontainer.innerHTML = `
         <h1>Fact Checks</h1>
         <ul>
@@ -180,4 +200,78 @@ const formatFactChecks = (factChecks) => {
         </ul>
     `;
   return factcontainer;
+};
+
+const showLoadingScreen = () => {
+  const list = [
+    "Fact-checking the facts… and also your patience.",
+    "Making sure the facts have facts.",
+    "Unpacking some truth… bubble wrap takes a while.",
+    "Loading facts… and some dad jokes.",
+    "Verifying everything twice… just in case.",
+    "Questioning the questions and answering the answers.",
+    "Consulting with our very serious AI... who loves puns.",
+    "Giving falsehoods the silent treatment.",
+    "Turning rumors into facts… or debunking them.",
+    "Breaking up with misinformation... it was toxic anyway.",
+    "Ensuring our AI doesn’t fall for clickbait.",
+    "Fact-checking so you don’t have to…",
+    "Loading… because the truth takes time.",
+    "Separating the facts from the fiction, with AI precision.",
+  ];
+  //const body = document.createElement("body");
+  document.body.innerHTML = `
+      <div id="loading">
+        <div class="rotate"></div>
+        <div class="center"></div>
+      </div>
+      <style>
+        #loading {
+            position : relative;
+            height: 200px;
+            width: 200px;
+            justify-self: center;
+        }
+        .center {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color : rgb(26, 26, 26);
+            border-radius : 50%;
+            top: 25%;
+            place-self : center;
+            z-index: 0;
+        }
+        .rotate {
+            width: 200px;
+            height: 200px;
+            z-index: -1;
+            background-image: conic-gradient(rgb(26, 26, 26), rgb(128, 140, 250));
+            border-radius : 50%;
+            animation-name: rotate;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            position: absolute;
+            place-self : center;
+            }
+    
+          @keyframes rotate {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+              }  
+            }
+      </style>
+    `;
+  const text = document.createElement("h2");
+  let i = 0;
+  document.body.appendChild(text);
+  text.textContent = list[Math.floor(Math.random() * list.length)];
+  const updateText = () => {
+    text.textContent = list[Math.floor(Math.random() * list.length)];
+  };
+  setInterval(updateText, 3000);
 };
