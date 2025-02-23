@@ -4,7 +4,7 @@ import ast
 def tuplecreation(listOfTuples):
     returnList = []
     for string1, string2 in listOfTuples:
-        genai.configure(api_key='AIzaSyCfe6L5MMhkgSC5Rc2KYxgWA-aXA74nhdQ')
+        genai.configure(api_key='YOUR KEY HERE')
         model = genai.GenerativeModel('gemini-pro')
         prompt = f"""Analyze the two given strings, if the strings are similar in anyway and 
         they contain numbers that represent the same thing
